@@ -3,9 +3,11 @@
     <head>
         <meta charset="utf-8">
         <title>Slot Game</title>
-    </head>
         <script src="../src/lib/pixi.min.js"></script>
         <script src="../src/main.js"></script>
+        
+    </head>
+        
     <body>
         <script type="text/javascript">
 
@@ -19,7 +21,13 @@
 
             var renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.view);
+            
+            init();
+        
+            
+            
         </script>
+  
         <style>
             body {
     			margin: 0pt;
@@ -27,5 +35,7 @@
     			overflow: hidden;
             }
         </style>
+
+        
     </body>
 </html>
