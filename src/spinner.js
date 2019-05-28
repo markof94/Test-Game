@@ -1,4 +1,5 @@
 class Spinner {
+
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -15,6 +16,9 @@ class Spinner {
 
         this.assignValues();
 
+        this.highlightedSlots = [false, false, false];
+        this.highlight = false;
+
         /*
         for(let i = 0; i < this.imgs.length; i++){
             stage.addChild(this.imgs[i]);
@@ -23,6 +27,8 @@ class Spinner {
     }
 
     assignValues = function(){
+
+       
         for(let i = 0; i < this.placeholderCount; i++){
             this.value[i] = Math.floor(Math.random() * 8);
             
@@ -73,10 +79,10 @@ class Spinner {
            
        }
        
-      
 
        if(this.spinState == SpinState.STOP_SPINNING){
            
+            //Move it to starting position
             for(let i = 0; i < 3; i++){
                 
                 if(this.imgs[i].y > this.y + spinnerWidth * i + this.imgSize/2){
@@ -91,6 +97,20 @@ class Spinner {
        if(this.speed <= 0){
            this.speed = 0;
        }
+
+       if(this.highlight){
+        for(let i = 0; i < this.highlightedSlots.length; i++){
+            if(this.highlightedSlots[i]){
+
+                //animation
+
+                //this.imgs[i].y -= 10;
+            }
+        }
+        
+       }
+       
+
     }
 
     setState = function(state){
@@ -104,6 +124,7 @@ class Spinner {
                 this.placeholderImgs[i].visible = true;
             }
 
+            this.reset();
         }
 
         if(this.spinState == SpinState.STOP_SPINNING){
@@ -120,7 +141,12 @@ class Spinner {
     }
 
 
-
+    reset = function(){
+        this.highlight = false;
+        for(let i = 0; i < this.highlightedSlots.length; i++){
+            this.highlightedSlots[i] = false;
+        }
+    }
     
 
 }

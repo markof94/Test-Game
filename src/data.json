@@ -1,0 +1,23 @@
+[
+    {
+        "images": {
+            "slot1": "assets/apple.png",
+            "slot2": "assets/blueghost.png",
+            "slot3": "assets/greenghost.png",
+            "slot4": "assets/icecream.png",
+            "slot5": "assets/orangeghost.png",
+            "slot6": "assets/redghost.png",
+            "slot7": "assets/scatter.png",
+            "joker": "assets/joker.png"
+        },
+        "valuesThree":[
+            "5", "5", "5", "10", "10", "10", "20", "50"
+        ],
+        "valuesFour":[
+            "10", "10", "10", "20", "20", "40", "200", "200"
+        ],
+        "valuesFive":[
+            "50", "50", "50", "100", "100", "200", "300", "400"
+        ]
+    }
+]
