@@ -6,11 +6,9 @@ class Button{
     
 
         this.labelStyle = new TextStyle({
-            fontFamily: "Verdana",
-            fontSize: 36,
+            fontFamily: myFont,
+            fontSize: Math.floor(w/3),
             fill: "white",
-            stroke: '#ff3300',
-            strokeThickness: 0,
             fontWeight: "bold"
         
  
@@ -21,6 +19,6 @@ class Button{
         this.label.anchor.set(0.5, 0.5);
         stage.addChild(this.btn);
         stage.addChild(this.label);
-        
+
     }
 }

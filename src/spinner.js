@@ -71,7 +71,7 @@ class Spinner {
        }
 
        if(this.spinState == SpinState.START_SPINNING && this.speed <= this.maxSpeed){
-            this.speed += this.acceleration;
+            this.speed = Smooth(this.speed, this.maxSpeed, 50);
        }else{
            if(this.spinState == SpinState.START_SPINNING){
                 this.setState(SpinState.SPINNING);
@@ -86,7 +86,7 @@ class Spinner {
             for(let i = 0; i < 3; i++){
                 
                 if(this.imgs[i].y > this.y + spinnerWidth * i + this.imgSize/2){
-                    this.imgs[i].y -= 5;
+                    this.imgs[i].y = Smooth(this.imgs[i].y, this.y + spinnerWidth * i + this.imgSize/2, 8);
                     
                 }
             }
@@ -131,7 +131,7 @@ class Spinner {
             this.assignValues();
             this.speed = 0;
             for(let i = 0; i < 3; i++){
-                this.imgs[i].y = this.y + spinnerWidth * i + this.imgSize/2 + 40;
+                this.imgs[i].y = this.y + spinnerWidth * i + this.imgSize/2 + spinnerBounceOffset;
                 this.imgs[i].visible = true;
             }
             for(let i = 0; i < this.placeholderCount; i++){

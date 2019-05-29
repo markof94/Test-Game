@@ -1,6 +1,10 @@
 
 function checkResults() {
 
+    let tmpLastWin = lastWin;
+    lastWin = 0;
+
+    lastWinCount = 0;
 
     //===Store all values in a 3x5 matrix so it's easier to check all combinations and find their corresponding places
 
@@ -26,8 +30,6 @@ function checkResults() {
 
     checkStraight();
 
-
-
     //===Count zigzag
 
     /*
@@ -35,76 +37,69 @@ function checkResults() {
     0   x   0   x   0
     0   0   x   0   0
     */
-    checkCombination(0, 1, 2, 1, 0, 0xFF00FF);
+    checkCombination(0, 1, 2, 1, 0);
 
     /*
     0   0   x   0   0
     0   x   0   x   0
     x   0   0   0   x
     */
-    checkCombination(2, 1, 0, 1, 2, 0x00FF00);
+    checkCombination(2, 1, 0, 1, 2);
 
     /*
     x   x   0   0   0
     0   0   x   0   0
     0   0   0   x   x
     */
-    checkCombination(0, 0, 1, 2, 2, 0xFF0000);
+    checkCombination(0, 0, 1, 2, 2);
 
     /*
     0   0   0   x   x
     0   0   x   0   0
     x   x   0   0   0
     */
-    checkCombination(2, 2, 1, 0, 0, 0xA00000);
+    checkCombination(2, 2, 1, 0, 0);
 
     /*
     0   x   x   x   0
     x   0   0   0   x
     0   0   0   0   0
     */
-    checkCombination(1, 0, 0, 0, 1, 0x0000FF);
+    checkCombination(1, 0, 0, 0, 1);
 
     /*
     0   0   0   0   0
     x   0   0   0   x
     0   x   x   x   0
     */
-    checkCombination(1, 2, 2, 2, 1, 0x0F0F0F);
+    checkCombination(1, 2, 2, 2, 1);
 
     /*
     x   0   0   0   x
     0   x   x   x   0
     0   0   0   0   0
     */
-    checkCombination(0, 1, 1, 1, 0, 0xF0F0F0);
+    checkCombination(0, 1, 1, 1, 0);
 
     /*
     0   0   0   0   0
     0   x   x   x   0
     x   0   0   0   x
     */
-    checkCombination(2, 1, 1, 1, 2, 0xAA0052);
+    checkCombination(2, 1, 1, 1, 2);
 
     /*
     0   x   0   0   0
     x   0   x   0   x
     0   0   0   x   0
     */
-    checkCombination(1, 0, 1, 2, 1, 0xBABABA);
+    checkCombination(1, 0, 1, 2, 1);
 
     /*
     0   0   0   x   0
     x   0   x   0   x
     0   x   0   0   0
     */
-    checkCombination(1, 2, 1, 0, 1, 0xC4C4C4);
-
-    /*
-     0   0   0   x   0
-     x   0   x   0   x
-     0   x   0   0   0
-     */
     checkCombination(1, 2, 1, 0, 1);
 
     /*
@@ -127,14 +122,25 @@ function checkResults() {
         toggleRectanglesVisibility();
     }
 
-   
+    if(lastWin > 0){
+        balance += lastWin;
+    }else{
+        lastWin = tmpLastWin;
+    }
     console.log("Balance: " + balance);
     
+    if(lastWinCount > 0){
+        messageString = lastWinCount + " winning combinations!";
+    }else{
+        messageString = "No winning combinations"
+    }
+
+
 
 }
 
 function checkStraight() {
-    //===Count all straights
+    //===Count straights in all 3 rows
     
     for (let i = 0; i < 3; i++) {
         let rectangles = [];
@@ -155,7 +161,7 @@ function checkStraight() {
 
         //activate animations for all eligible slots
         if (straightCount >= 2) {
-               
+            lastWinCount++;
             for (let j = 0; j <= straightCount; j++) {
                 spinners[j].highlightedSlots[i] = true;
                 spinners[j].highlight = true;
@@ -165,10 +171,10 @@ function checkStraight() {
                     spinners[j].imgs[i].y - spinnerWidth/2,
                     spinnerWidth,
                     spinnerWidth,
-                    0xFFFFFF));
+                    0xFFE401));
             }
             
-            //===Avoid using the joker value unless all winning are jokers.
+            //===Avoid using the joker value for profit calculation unless all winning are jokers.
             let val = spinners[0].value[i];
             if(val == jokerVal){
                 for(let j = 0; j <= straightCount; j++){
@@ -180,7 +186,7 @@ function checkStraight() {
             //===
 
             let profit = calculateProfit(straightCount + 1, val);
-            balance += profit;
+            lastWin += profit;
             console.log("Profit: " + profit);
             
         }
@@ -214,7 +220,7 @@ function checkStraight() {
 
 */
 function checkCombination(int1, int2, int3, int4, int5, color) {
-    let rectColor = 0xFFFFFF;
+    let rectColor = 0xFFE401;
     if (color) {
         rectColor = color;
     }
@@ -237,7 +243,7 @@ function checkCombination(int1, int2, int3, int4, int5, color) {
 
      //activate animations for all eligible slots
      if (comboCount >= 2) {
-
+        lastWinCount++;
         let rectangles = [];
         for (let j = 0; j <= comboCount; j++) {
             spinners[j].highlightedSlots[combination[j]] = true;
@@ -263,7 +269,7 @@ function checkCombination(int1, int2, int3, int4, int5, color) {
           //===
 
         let profit = calculateProfit(comboCount + 1, val);
-        balance += profit;
+        lastWin += profit;
         //console.log("Profit: " + profit);
 
         if(rectangles.length > 0){

@@ -10,7 +10,23 @@
         <script src="../src/checker.js"></script>
         <script src="../src/rectangle.js"></script>
         <script src="../src/button.js"></script>
-        <script type="text/javascript" src="../src/data.json"></script>
+        <script src="../src/styles.js"></script>
+        <script src="../src/utils.js"></script>
+        <script type="application/json" src="../src/data.json"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+        <script>
+            WebFont.load({
+                google: {
+                    families: ['Russo One']
+                },
+                active:e=>{
+                    console.log("font loaded!");
+                    // now start setting up your PixiJS (or canvas) stuff!
+                }
+            });
+        </script>
+
        
     </head>
         
@@ -25,9 +41,10 @@
 
             PIXI.utils.sayHello(type);
 
-            var renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
+          
+            var renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, null, false, true);
             document.body.appendChild(renderer.view);
-            
+           
             init();
         
             

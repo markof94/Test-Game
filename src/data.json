@@ -8,7 +8,12 @@
             "slot5": "assets/orangeghost.png",
             "slot6": "assets/redghost.png",
             "slot7": "assets/scatter.png",
-            "joker": "assets/joker.png"
+            "joker": "assets/joker.png",
+            "betButtonUp": "assets/buttonUp.png",
+            "betButtonDown": "assets/buttonDown.png",
+            "betButtonOver": "assets/buttonOver.png",
+            "panel": "assets/panel.png",
+            "pointer": "assets/pointer.png"
         },
         "valuesThree":[
             "5", "5", "5", "10", "10", "10", "20", "50"
