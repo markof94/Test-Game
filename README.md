@@ -2,6 +2,8 @@
 
 A classic casino 5x3 reels slot game.
 
+Written in JavaScript with PixiJS library.
+
 # Combination checks included:
 
 # 
