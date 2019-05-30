@@ -14,6 +14,7 @@ let pointer;
 let Graphics = PIXI.Graphics;
 let Text = PIXI.Text;
 let TextStyle = PIXI.TextStyle;
+let ticker;
 
 let spinnerCount = 5;
 let spinners = [spinnerCount];
@@ -23,7 +24,7 @@ let spinnerBounceOffset = 40; //how far will it snap when stopping the spin befo
 
 
 //===Value for joker
-let jokerVal = 7;
+let jokerVal = 7; //taken from JSON in init()
 
 //===Textures
 let slotImages = [8];
@@ -33,10 +34,12 @@ let lowerPanel;
 let upperPanel;
 let buttonUp, buttonDown, buttonOver;
 let buttonFrames;
-let pointerTexture;
+let highlighterTexture;
+
+let betPointerTexture;
 
 
-let pointerImg;
+let betPointerImg;
 
 let SpinState = {
     START_SPINNING: 0,
@@ -52,7 +55,7 @@ let button100;
 let button200;
 let button400;
 
-let balance = 1000;
+let balance = 1000; //taken from JSON in init()
 let betValue = 100;
 let displayedBalance = 1000;
 let lastWin = 0;
@@ -76,7 +79,18 @@ let myFont = "Russo One";
 
 let data; //JSON DATA
 
+let animationTimer = 0;
+
+//===Time stuff
+const perfectFrameTime = 1000 / 60;
+let lastTime = 0;
+let deltaTime = 0;
+
+let date;
+
 function init() {
+
+    
 
     //===Basic responsiveness
     if (spinnerWidth > window.innerWidth * 0.1) {
@@ -84,13 +98,18 @@ function init() {
     }
     spinnerHeight = spinnerWidth * 3;
 
-    console.log("aaaa");
+    date = new Date();
+
+    lastTime = date.getTime();
+    
+    
 
     //usage:
     readTextFile("../src/data.json", function (text) {
         data = JSON.parse(text)[0];
         //console.log(data.images);
     });
+
 
     setTimeout(() => {
         console.log(data);
@@ -108,18 +127,26 @@ function init() {
                 data.images.betButtonDown,
                 data.images.betButtonOver,
                 data.images.panel,
-                data.images.pointer
+                data.images.pointer,
+                data.images.highlighter
             ])
             .load(onLoad);
+
+
+
+        balance = parseInt(data.settings.startingBalance);
+        jokerVal = parseInt(data.settings.jokerValue);
 
         renderer.backgroundColor = 0x272727;
         renderer.render(stage);
 
-        stage.antialias = true;
 
-        t = new Tink(PIXI, renderer.view); //TINK LIBRARY
+        //TINK LIBRARY, needed for catching pointer/mouse/touch actions
+        t = new Tink(PIXI, renderer.view); 
 
         pointer = t.makePointer();
+
+        
 
     }, 200);
 
@@ -142,7 +169,8 @@ function onLoad() {
     buttonDown = TextureCache[data.images.betButtonDown];
     buttonOver = TextureCache[data.images.betButtonOver];
     panelTexture = TextureCache[data.images.panel];
-    pointerTexture = TextureCache[data.images.pointer];
+    betPointerTexture = TextureCache[data.images.pointer];
+    highlighterTexture = TextureCache[data.images.highlighter];
 
     console.log("Assets Loaded");
 
@@ -180,15 +208,15 @@ function onLoad() {
         spinnersX += spinnerOffset;
     }
 
-    pointerImg = new Sprite(pointerTexture, 0, 0);
-    pointerImg.position.set(
+    betPointerImg = new Sprite(betPointerTexture, 0, 0);
+    betPointerImg.position.set(
         button100.btn.x + button100.btn.width / 2,
         button100.btn.y + button100.btn.height * 1.25);
-    pointerImg.width = button100.btn.width / 3;
-    pointerImg.height = button100.btn.width / 3;
-    pointerImg.anchor.set(0.5, 0.5);
+    betPointerImg.width = button100.btn.width / 3;
+    betPointerImg.height = button100.btn.width / 3;
+    betPointerImg.anchor.set(0.5, 0.5);
 
-    stage.addChild(pointerImg);
+    stage.addChild(betPointerImg);
 
 
     //let rect = new Rectangle(20, 20, 128, 128, 0xFFFFFF);
@@ -215,6 +243,14 @@ function loop() {
         spinners[i].update();
     }
 
+    
+    //===Calculate delta time
+    deltaTime = (Date.now() - lastTime) / perfectFrameTime / 100;
+    lastTime = Date.now();
+    
+    //console.log(deltaTime);
+
+    animationTimer += deltaTime;
 }
 
 function createButtons() {
@@ -318,6 +354,8 @@ function initiateSpin(amount) {
 
         movePointer(amount);
 
+        hideAllRects();
+        animationTimer = 0;
 
         if (toggler) {
             clearInterval(toggler); //stop showing boxes

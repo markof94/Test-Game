@@ -163,8 +163,8 @@ function checkStraight() {
         if (straightCount >= 2) {
             lastWinCount++;
             for (let j = 0; j <= straightCount; j++) {
-                spinners[j].highlightedSlots[i] = true;
-                spinners[j].highlight = true;
+                //spinners[j].highlightedSlots[i] = true;
+                //spinners[j].highlight = true;
 
                 rectangles.push(new Rectangle(
                     spinners[j].imgs[i].x - spinnerWidth/2,
@@ -172,6 +172,9 @@ function checkStraight() {
                     spinnerWidth,
                     spinnerWidth,
                     0xFFE401));
+
+               
+
             }
             
             //===Avoid using the joker value for profit calculation unless all winning are jokers.
@@ -246,8 +249,8 @@ function checkCombination(int1, int2, int3, int4, int5, color) {
         lastWinCount++;
         let rectangles = [];
         for (let j = 0; j <= comboCount; j++) {
-            spinners[j].highlightedSlots[combination[j]] = true;
-            spinners[j].highlight = true;
+            //spinners[j].highlightedSlots[combination[j]] = true;
+            //spinners[j].highlight = true;
 
             rectangles.push(new Rectangle(
                 spinners[j].x,
@@ -257,7 +260,7 @@ function checkCombination(int1, int2, int3, int4, int5, color) {
                 rectColor));
         }
 
-          //===Avoid using the joker value unless all winning are jokers.
+          //===Avoid using the joker value unless all winning fields are jokers.
           let val = spinners[0].value[combination[0]];
           if(val == jokerVal){
               for(let j = 0; j <= comboCount; j++){

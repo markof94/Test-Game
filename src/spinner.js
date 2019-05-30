@@ -18,12 +18,17 @@ class Spinner {
 
         this.highlightedSlots = [false, false, false];
         this.highlight = false;
-
+        this.highlightID = [];
         /*
         for(let i = 0; i < this.imgs.length; i++){
             stage.addChild(this.imgs[i]);
         }
         */
+    }
+
+    clearHighlights = function(){
+        this.highlightedSlots = [false, false, false];
+        
     }
 
     assignValues = function(){
@@ -98,18 +103,33 @@ class Spinner {
            this.speed = 0;
        }
 
-       if(this.highlight){
-        for(let i = 0; i < this.highlightedSlots.length; i++){
-            if(this.highlightedSlots[i]){
+      
+       //if(this.highlight){
+            for(let i = 0; i < this.highlightedSlots.length; i++){
 
-                //animation
+                if(this.highlightedSlots[i]){
 
-                //this.imgs[i].y -= 10;
+                    //scale up down animation
+                    this.imgs[i].scale.x = Sinusoid(this.imgs[i].scale.x, 350, 0.005);
+                    this.imgs[i].scale.y = Sinusoid(this.imgs[i].scale.y, 350, 0.005);
+
+
+                    //wiggle rotate animation
+                    //this.imgs[i].rotation = this.imgs[i].rotation - Sinusoid(this.imgs[i].rotation, 350, 0.3);
+                
+                    
+                }else{
+                // this.imgs[i].scale.x = 1;
+                   
+                }
             }
-        }
         
-       }
-       
+       //}
+       for(let i = 0; i < this.highlightedSlots.length; i++){
+        //this.imgs[i].scale.x = 1;
+        
+    }
+        
 
     }
 

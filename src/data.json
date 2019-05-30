@@ -1,19 +1,20 @@
 [
     {
         "images": {
-            "slot1": "assets/apple.png",
-            "slot2": "assets/blueghost.png",
-            "slot3": "assets/greenghost.png",
-            "slot4": "assets/icecream.png",
-            "slot5": "assets/orangeghost.png",
-            "slot6": "assets/redghost.png",
-            "slot7": "assets/scatter.png",
-            "joker": "assets/joker.png",
+            "slot1": "assets/blackwidow.png",
+            "slot2": "assets/fury.png",
+            "slot3": "assets/vision.png",
+            "slot4": "assets/hulk.png",
+            "slot5": "assets/drstrange.png",
+            "slot6": "assets/cap.png",
+            "slot7": "assets/ironman.png",
+            "joker": "assets/shield.png",
             "betButtonUp": "assets/buttonUp.png",
             "betButtonDown": "assets/buttonDown.png",
             "betButtonOver": "assets/buttonOver.png",
             "panel": "assets/panel.png",
-            "pointer": "assets/pointer.png"
+            "pointer": "assets/pointer.png",
+            "highlighter": "assets/highlighter.png"
         },
         "valuesThree":[
             "5", "5", "5", "10", "10", "10", "20", "50"
@@ -23,6 +24,10 @@
         ],
         "valuesFive":[
             "50", "50", "50", "100", "100", "200", "300", "400"
-        ]
+        ],
+        "settings":{
+            "startingBalance": "1000",
+            "jokerValue": "7"
+        }
     }
 ]

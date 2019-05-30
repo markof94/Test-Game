@@ -26,10 +26,33 @@ function resetSpinnerAnimations() {
 
 function toggleRectanglesVisibility() {
     let id = 0;
+
     toggler = setInterval(() => {
         hideAllRects();
 
+        animationTimer = 0;
+
+        for(let i = 0; i < spinnerCount; i++){
+            spinners[i].clearHighlights();
+        }
+
         setRectGroupVisibility(id, true);
+
+
+        //===Determine which slots to highlight as winning
+        for (let i = 0; i < RectangleGroups[id].length; i++) {
+            let currentRectangle = RectangleGroups[id][i].rect;
+            let spinnerID = Math.floor((currentRectangle.x - spinners[0].x)/spinnerWidth);
+            let imageID =   Math.floor((currentRectangle.y - spinners[0].y)/spinnerWidth);
+            //console.log("Spinner: " + spinnerID + " Image: " + imageID);
+        
+
+            spinners[spinnerID].highlightedSlots[imageID] = true;
+           
+
+
+    
+        }
 
         id++;
         if (id > RectangleGroups.length - 1) {
@@ -37,6 +60,8 @@ function toggleRectanglesVisibility() {
         }
 
     }, 1000);
+
+
 
 }
 
@@ -91,7 +116,7 @@ function updateGUIOrder() {
     stage.removeChild(lastWinLabel);
     stage.removeChild(lastWinDisplayLabel);
     stage.removeChild(messageLabel);
-    stage.removeChild(pointerImg);
+    stage.removeChild(betPointerImg);
 
     stage.addChild(lowerPanel);
     stage.addChild(upperPanel);
@@ -100,14 +125,14 @@ function updateGUIOrder() {
     stage.addChild(lastWinLabel);
     stage.addChild(lastWinDisplayLabel);
     stage.addChild(messageLabel);
-    stage.addChild(pointerImg);
+    stage.addChild(betPointerImg);
 }
 
 
 function movePointer(value) {
     let goalX = button100.btn.x + button100.btn.width / 2;
 
-    if (pointerImg) {
+    if (betPointerImg) {
 
         if (value >= 20) {
 
@@ -139,5 +164,16 @@ function movePointer(value) {
 
     }
 
-    pointerImg.x = Smooth(pointerImg.x, goalX, 8);
+    betPointerImg.x = Smooth(betPointerImg.x, goalX, 8);
+}
+
+
+function Sinusoid(value, frequency, amplitude)
+{
+
+    let val = value + amplitude * Math.sin(animationTimer * 2 * Math.PI * frequency * deltaTime);
+    //float y = 1.25f;
+    //console.log(val);
+
+   return val;
 }
