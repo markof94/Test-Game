@@ -16,6 +16,13 @@
             "pointer": "assets/pointer.png",
             "highlighter": "assets/highlighter.png"
         },
+        "sounds":{
+            "bet": "assets/sounds/bet.wav",
+            "lose": "assets/sounds/lose.wav",
+            "music": "assets/sounds/music.mp3",
+            "spinstop": "assets/sounds/spinstop.wav",
+            "win": "assets/sounds/win.wav"
+        },
         "valuesThree":[
             "5", "5", "5", "10", "10", "10", "20", "50"
         ],

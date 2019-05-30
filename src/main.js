@@ -88,6 +88,11 @@ let deltaTime = 0;
 
 let date;
 
+let soundsLoaded = false;
+let betSound, loseSound, spinStopSound, winSound, music;
+
+let checkResultsTimeout;
+
 function init() {
 
     
@@ -128,7 +133,12 @@ function init() {
                 data.images.betButtonOver,
                 data.images.panel,
                 data.images.pointer,
-                data.images.highlighter
+                data.images.highlighter,
+                data.sounds.bet,
+                data.sounds.lose,
+                data.sounds.music,
+                data.sounds.spinstop,
+                data.sounds.win
             ])
             .load(onLoad);
 
@@ -171,6 +181,29 @@ function onLoad() {
     panelTexture = TextureCache[data.images.panel];
     betPointerTexture = TextureCache[data.images.pointer];
     highlighterTexture = TextureCache[data.images.highlighter];
+
+    sounds.load([
+        data.sounds.bet,
+        data.sounds.lose,
+        data.sounds.music,
+        data.sounds.spinstop,
+        data.sounds.win
+    ]);
+
+    sounds.whenLoaded = () => {
+        
+        soundsLoaded = true;
+
+        betSound = sounds[data.sounds.bet];
+        loseSound = sounds[data.sounds.lose];
+        spinStopSound = sounds[data.sounds.spinstop];
+        winSound = sounds[data.sounds.win];
+        music = sounds[data.sounds.music];
+
+        music.play();
+        music.loop = true;
+        music.volume = 0.4;
+    }
 
     console.log("Assets Loaded");
 
@@ -350,6 +383,14 @@ function initiateSpin(amount) {
         betValue = amount;
         balance -= betValue;
 
+        if(checkResultsTimeout){
+            clearTimeout(checkResultsTimeout);
+        }
+        
+
+        betSound.play();
+
+      
         messageString = "Spinning...";
 
         movePointer(amount);
@@ -372,9 +413,10 @@ function initiateSpin(amount) {
 
                     spinners[i].setState(SpinState.STOP_SPINNING);
                     if (i == spinnerCount - 1) {
-                        canSpin = true;
-                        setTimeout(() => {
+                        
+                        checkResultsTimeout = setTimeout(() => {
                             checkResults();
+                            
                         }, 250);
 
                     }

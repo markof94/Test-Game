@@ -149,6 +149,9 @@ class Spinner {
 
         if(this.spinState == SpinState.STOP_SPINNING){
             this.assignValues();
+
+            spinStopSound.play();
+
             this.speed = 0;
             for(let i = 0; i < 3; i++){
                 this.imgs[i].y = this.y + spinnerWidth * i + this.imgSize/2 + spinnerBounceOffset;

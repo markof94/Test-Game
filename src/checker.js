@@ -124,8 +124,10 @@ function checkResults() {
 
     if(lastWin > 0){
         balance += lastWin;
+        winSound.play();
     }else{
         lastWin = tmpLastWin;
+        loseSound.play();
     }
     console.log("Balance: " + balance);
     
@@ -134,6 +136,8 @@ function checkResults() {
     }else{
         messageString = "No winning combinations"
     }
+
+    canSpin = true;
 
 
 
