@@ -4,42 +4,46 @@
 
 *****************************************************/
 
+//===Alias shortcuts
 let stage = new PIXI.Container();
 let loader = PIXI.loader;
 let resources = PIXI.loader.resources;
 let Sprite = PIXI.Sprite;
 let TextureCache = PIXI.utils.TextureCache;
-let t;
+let tink; //used for mouse/touch events
 let pointer;
 let Graphics = PIXI.Graphics;
 let Text = PIXI.Text;
 let TextStyle = PIXI.TextStyle;
 let ticker;
 
+
+//===Spinner info
 let spinnerCount = 5;
 let spinners = [spinnerCount];
 let spinnerWidth = 100;
 let spinnerHeight = spinnerWidth * 3;
-let spinnerBounceOffset = 40; //how far will it snap when stopping the spin before bouncing back to original position
+let spinnerBounceOffset = 40; //how far the spinner will stop before bouncing back to original position
+let spinnerTotalImages = 8;
 
-
-//===Value for joker
+//===Value for joker used in checks
 let jokerVal = 7; //taken from JSON in init()
 
 //===Textures
-let slotImages = [8];
-let buttonImage;
-let panelTexture;
-let lowerPanel;
-let upperPanel;
-let buttonUp, buttonDown, buttonOver;
-let buttonFrames;
-let highlighterTexture;
-
-let betPointerTexture;
+let textureSlotImages = [8],
+    texturePanel,
+    textureButtonUp,
+    textureButtonDown,
+    textureButtonOver,
+    textureButtonFrames = [],
+    textureHighlighter,
+    textureBetPointer;
 
 
-let betPointerImg;
+//===Sprites
+let sprLowerPanel,
+    sprUpperPanel,
+    sprBetPointer;
 
 let SpinState = {
     START_SPINNING: 0,
@@ -47,15 +51,16 @@ let SpinState = {
     STOP_SPINNING: 2
 }
 
-let canSpin = true;
 
-let button20;
-let button40;
-let button100;
-let button200;
-let button400;
 
-let balance = 1000; //taken from JSON in init()
+//===Buttons
+let button20,
+    button40,
+    button100,
+    button200,
+    button400;
+
+let balance = 1000; //load from JSON
 let betValue = 100;
 let displayedBalance = 1000;
 let lastWin = 0;
@@ -63,59 +68,64 @@ let lastWinCount = 0;
 let displayedLastWin = 0;
 
 //===Labels
-let balanceDisplayLabel;
-let balanceLabel;
-let lastWinDisplayLabel;
-let lastWinLabel;
-let messageLabel;
+let lblBalanceNumber;
+let lblBalanceText;
+let lblLastWinNumber;
+let lblLastWinText;
+let lblMessage;
 
-let messageString;
+let strMessage; //what message to display
 
-let RectangleGroups = [];
+let RectangleGroups = []; //used for iterating through which ones to display
+let rectangleToggler; //used for clearing rectangle display interval
 
-let toggler; //used for statrting and stopping timeout
 
-let myFont = "Russo One";
 
-let data; //JSON DATA
-
-let animationTimer = 0;
 
 //===Time stuff
 const perfectFrameTime = 1000 / 60;
 let lastTime = 0;
 let deltaTime = 0;
-
+let animationTimer = 0;
 let date;
 
-let soundsLoaded = false;
-let betSound, loseSound, spinStopSound, winSound, music;
+//===Sounds
+let sndBet,
+    sndLose,
+    sndSpinStop,
+    sndWin,
+    sndMusic;
 
-let checkResultsTimeout;
+
+
+//===Other
+let myFont = "Russo One";
+let data; //JSON DATA
+let canSpin = true;
+let soundsLoaded = false;
+let checkResultsTimeout; //used for clearing timeout
 
 function init() {
 
-    
-
-    //===Basic responsiveness
+    //===Basic responsiveness check, fit the screen
+    //===Most draw sizes will later be based off spinnerWidth
     if (spinnerWidth > window.innerWidth * 0.1) {
         spinnerWidth *= 0.5;
     }
     spinnerHeight = spinnerWidth * 3;
 
+
+    //===Used for calculating deltaTime
     date = new Date();
-
     lastTime = date.getTime();
-    
-    
 
-    //usage:
+
+    //===Read JSON data
     readTextFile("../src/data.json", function (text) {
         data = JSON.parse(text)[0];
-        //console.log(data.images);
     });
 
-
+    //===Allow delay for JSON to be loaded and then load assets
     setTimeout(() => {
         console.log(data);
         loader
@@ -142,8 +152,6 @@ function init() {
             ])
             .load(onLoad);
 
-
-
         balance = parseInt(data.settings.startingBalance);
         jokerVal = parseInt(data.settings.jokerValue);
 
@@ -151,36 +159,34 @@ function init() {
         renderer.render(stage);
 
 
-        //TINK LIBRARY, needed for catching pointer/mouse/touch actions
-        t = new Tink(PIXI, renderer.view); 
+        //for catching pointer/mouse/touch actions
+        tink = new Tink(PIXI, renderer.view);
+        pointer = tink.makePointer();
 
-        pointer = t.makePointer();
-
-        
 
     }, 200);
 
 
-
-
 }
 
+//===After assets have been loaded
 function onLoad() {
-    //Assign assets to textures to be used later for sprites
-    slotImages[0] = TextureCache[data.images.slot1];
-    slotImages[1] = TextureCache[data.images.slot2];
-    slotImages[2] = TextureCache[data.images.slot3];
-    slotImages[3] = TextureCache[data.images.slot4];
-    slotImages[4] = TextureCache[data.images.slot5];
-    slotImages[5] = TextureCache[data.images.slot6];
-    slotImages[6] = TextureCache[data.images.slot7];
-    slotImages[7] = TextureCache[data.images.joker];
-    buttonUp = TextureCache[data.images.betButtonUp];
-    buttonDown = TextureCache[data.images.betButtonDown];
-    buttonOver = TextureCache[data.images.betButtonOver];
-    panelTexture = TextureCache[data.images.panel];
-    betPointerTexture = TextureCache[data.images.pointer];
-    highlighterTexture = TextureCache[data.images.highlighter];
+
+    //Assign assets to variables to be used later
+    textureSlotImages[0] = TextureCache[data.images.slot1];
+    textureSlotImages[1] = TextureCache[data.images.slot2];
+    textureSlotImages[2] = TextureCache[data.images.slot3];
+    textureSlotImages[3] = TextureCache[data.images.slot4];
+    textureSlotImages[4] = TextureCache[data.images.slot5];
+    textureSlotImages[5] = TextureCache[data.images.slot6];
+    textureSlotImages[6] = TextureCache[data.images.slot7];
+    textureSlotImages[7] = TextureCache[data.images.joker];
+    textureButtonUp = TextureCache[data.images.betButtonUp];
+    textureButtonDown = TextureCache[data.images.betButtonDown];
+    textureButtonOver = TextureCache[data.images.betButtonOver];
+    texturePanel = TextureCache[data.images.panel];
+    textureBetPointer = TextureCache[data.images.pointer];
+    textureHighlighter = TextureCache[data.images.highlighter];
 
     sounds.load([
         data.sounds.bet,
@@ -191,74 +197,82 @@ function onLoad() {
     ]);
 
     sounds.whenLoaded = () => {
-        
+
         soundsLoaded = true;
 
-        betSound = sounds[data.sounds.bet];
-        loseSound = sounds[data.sounds.lose];
-        spinStopSound = sounds[data.sounds.spinstop];
-        winSound = sounds[data.sounds.win];
-        music = sounds[data.sounds.music];
+        sndBet = sounds[data.sounds.bet];
+        sndLose = sounds[data.sounds.lose];
+        sndSpinStop = sounds[data.sounds.spinstop];
+        sndWin = sounds[data.sounds.win];
+        sndMusic = sounds[data.sounds.music];
 
-        music.play();
-        music.loop = true;
-        music.volume = 0.4;
+        sndMusic.loop = true;
+        //music.play();
+
+        sndMusic.volume = 0.4;
     }
 
     console.log("Assets Loaded");
 
-    buttonFrames = [
-        buttonUp,
-        buttonOver,
-        buttonDown
+    //===Button frames to be used for bet button creation
+    textureButtonFrames = [
+        textureButtonUp,
+        textureButtonOver,
+        textureButtonDown
     ]
 
 
 
-    //Initiate spinners
+    //===Calculate positions
     let spinnersX = window.innerWidth / 2 - spinnerWidth * 2.9;
     let spinnersY = 200;
     let spinnerOffset = spinnerWidth * 1.2;
 
-    lowerPanel = new Sprite(panelTexture, 0, 0);
-    lowerPanel.position.set(spinnersX, spinnersY + spinnerHeight);
-    lowerPanel.width = spinnerWidth * spinnerCount * 1.175;
-    lowerPanel.height = spinnerHeight / 2;
+    //===Draw panels for GUI
+    sprLowerPanel = new Sprite(texturePanel, 0, 0);
+    sprLowerPanel.position.set(spinnersX, spinnersY + spinnerHeight);
+    sprLowerPanel.width = spinnerWidth * spinnerCount * 1.175;
+    sprLowerPanel.height = spinnerHeight / 2;
 
-    upperPanel = new Sprite(panelTexture, 0, 0);
-    upperPanel.position.set(spinnersX, spinnersY - spinnerWidth * 1.5);
-    upperPanel.width = spinnerWidth * spinnerCount * 1.175;
-    upperPanel.height = spinnerHeight / 2;
+    sprUpperPanel = new Sprite(texturePanel, 0, 0);
+    sprUpperPanel.position.set(spinnersX, spinnersY - spinnerWidth * 1.5);
+    sprUpperPanel.width = spinnerWidth * spinnerCount * 1.175;
+    sprUpperPanel.height = spinnerHeight / 2;
 
-    stage.addChild(lowerPanel);
-    stage.addChild(upperPanel);
+    stage.addChild(sprLowerPanel);
+    stage.addChild(sprUpperPanel);
 
     createButtons();
     createLabels();
 
+
+    //Initiate spinners
     for (let i = 0; i < spinnerCount; i++) {
         spinners[i] = new Spinner(spinnersX, spinnersY);
         spinnersX += spinnerOffset;
     }
 
-    betPointerImg = new Sprite(betPointerTexture, 0, 0);
-    betPointerImg.position.set(
+    //===Make a pointer to show what bet amount is active
+    sprBetPointer = new Sprite(textureBetPointer, 0, 0);
+    sprBetPointer.position.set(
         button100.btn.x + button100.btn.width / 2,
-        button100.btn.y + button100.btn.height * 1.25);
-    betPointerImg.width = button100.btn.width / 3;
-    betPointerImg.height = button100.btn.width / 3;
-    betPointerImg.anchor.set(0.5, 0.5);
+        button100.btn.y + button100.btn.height * 1.25
+        );
+    sprBetPointer.width = button100.btn.width / 3;
+    sprBetPointer.height = button100.btn.width / 3;
+    sprBetPointer.anchor.set(0.5, 0.5);
 
-    stage.addChild(betPointerImg);
+    stage.addChild(sprBetPointer);
 
 
-    //let rect = new Rectangle(20, 20, 128, 128, 0xFFFFFF);
-
+    //===Initiate the main loop thread
     loop();
 }
 
 
+//===Update stuff
 function loop() {
+
     requestAnimationFrame(loop);
 
     updateGUIOrder();
@@ -268,7 +282,7 @@ function loop() {
     movePointer(betValue);
 
     //Update Tink
-    t.update();
+    tink.update();
 
     updateLabels();
 
@@ -276,21 +290,23 @@ function loop() {
         spinners[i].update();
     }
 
-    
+
     //===Calculate delta time
     deltaTime = (Date.now() - lastTime) / perfectFrameTime / 100;
     lastTime = Date.now();
-    
+
     //console.log(deltaTime);
 
     animationTimer += deltaTime;
+
 }
 
+//===Make 5 buttons for each bet option: 20, 40, 100, 200, 400
 function createButtons() {
 
     let buttonsW = spinnerWidth;
     let buttonsH = spinnerWidth * 0.8;
-    let buttonsY = window.innerHeight * 0.8;
+    let buttonsY = sprLowerPanel.y + sprLowerPanel.height * 1.5;
     let buttonsX = window.innerWidth / 2 - buttonsW * 2.55;
     let buttonOffset = buttonsW * 1.05;
 
@@ -322,38 +338,38 @@ function createButtons() {
 }
 
 function createLabels() {
-   //===Styles are defined in styles.js
+    //===Styles are defined in styles.js
 
-    balanceLabel = new Text("BALANCE", balanceTextStyle);
-    balanceLabel.position.set(window.innerWidth / 2, upperPanel.y + upperPanel.height * 0.1);
-    balanceLabel.anchor.set(0.5, 0.5);
+    lblBalanceText = new Text("BALANCE", balanceTextStyle);
+    lblBalanceText.position.set(window.innerWidth / 2, sprUpperPanel.y + sprUpperPanel.height * 0.1);
+    lblBalanceText.anchor.set(0.5, 0.5);
 
-    stage.addChild(balanceLabel);
+    stage.addChild(lblBalanceText);
 
-    balanceDisplayLabel = new Text(balance + "", balanceDisplayStyle);
-    balanceDisplayLabel.position.set(window.innerWidth / 2, upperPanel.y + upperPanel.height / 2);
-    balanceDisplayLabel.anchor.set(0.5, 0.5);
+    lblBalanceNumber = new Text(balance + "", balanceDisplayStyle);
+    lblBalanceNumber.position.set(window.innerWidth / 2, sprUpperPanel.y + sprUpperPanel.height / 2);
+    lblBalanceNumber.anchor.set(0.5, 0.5);
 
-    stage.addChild(balanceDisplayLabel);
+    stage.addChild(lblBalanceNumber);
 
-    lastWinLabel = new Text("LAST WIN", balanceTextStyle);
-    lastWinLabel.position.set(window.innerWidth / 2, lowerPanel.y + lowerPanel.height * 0.1);
-    lastWinLabel.anchor.set(0.5, 0.5);
+    lblLastWinText = new Text("LAST WIN", balanceTextStyle);
+    lblLastWinText.position.set(window.innerWidth / 2, sprLowerPanel.y + sprLowerPanel.height * 0.1);
+    lblLastWinText.anchor.set(0.5, 0.5);
 
-    stage.addChild(lastWinLabel);
+    stage.addChild(lblLastWinText);
 
-    lastWinDisplayLabel = new Text(lastWin + "", lastWinDisplayStyle);
-    lastWinDisplayLabel.position.set(window.innerWidth / 2, lowerPanel.y + lowerPanel.height / 2);
-    lastWinDisplayLabel.anchor.set(0.5, 0.5);
+    lblLastWinNumber = new Text(lastWin + "", lastWinDisplayStyle);
+    lblLastWinNumber.position.set(window.innerWidth / 2, sprLowerPanel.y + sprLowerPanel.height / 2);
+    lblLastWinNumber.anchor.set(0.5, 0.5);
 
-    stage.addChild(lastWinDisplayLabel);
+    stage.addChild(lblLastWinNumber);
 
-    messageLabel = new Text(messageString, messageStyle);
-    messageLabel.position.set(window.innerWidth / 2, upperPanel.y + upperPanel.height * 0.87);
-    messageLabel.anchor.set(0.5, 0.5);
+    lblMessage = new Text(strMessage, messageNeutralStyle);
+    lblMessage.position.set(window.innerWidth / 2, sprUpperPanel.y + sprUpperPanel.height * 0.87);
+    lblMessage.anchor.set(0.5, 0.5);
 
 
-    stage.addChild(messageLabel);
+    stage.addChild(lblMessage);
 
 
     placeBetText = new Text("Place your bet:", labelStyle);
@@ -363,71 +379,66 @@ function createLabels() {
     stage.addChild(placeBetText);
 }
 
+//===It's running in the main loop because of the Smooth() function
 function updateLabels() {
 
+    
     displayedBalance = Smooth(displayedBalance, balance, 8);
     displayedLastWin = Smooth(displayedLastWin, lastWin, 8);
 
-    balanceDisplayLabel.text = Math.round(displayedBalance) + "";
-    lastWinDisplayLabel.text = Math.round(displayedLastWin) + "";
+    lblBalanceNumber.text = Math.round(displayedBalance) + "";
+    lblLastWinNumber.text = Math.round(displayedLastWin) + "";
 
-    messageLabel.text = messageString;
+    lblMessage.text = strMessage;
 }
 
 
-
+//===Take the bet amount and start spinning if the conditions are met
 function initiateSpin(amount) {
-
 
     if (amount <= balance && canSpin) {
         betValue = amount;
         balance -= betValue;
 
-        if(checkResultsTimeout){
+        //===Avoid checking results if the next spin get initiated too quickly
+        if (checkResultsTimeout) {
             clearTimeout(checkResultsTimeout);
         }
-        
 
-        betSound.play();
+        sndBet.play();
 
-      
-        messageString = "Spinning...";
-
-        movePointer(amount);
-
-        hideAllRects();
-        animationTimer = 0;
-
-        if (toggler) {
-            clearInterval(toggler); //stop showing boxes
+        strMessage = "Spinning...";
+        lblMessage.style = messageNeutralStyle;
+    
+        if (rectangleToggler) {
+            clearInterval(rectangleToggler); //stop showing boxes
         }
 
         hideAllRects();
 
-        if (canSpin) {
-            for (let i = 0; i < spinnerCount; i++) {
-                spinners[i].setState(SpinState.START_SPINNING);
-                canSpin = false;
-                setTimeout(function () {
+        //===Manage spinner states
+        for (let i = 0; i < spinnerCount; i++) {
 
+            spinners[i].setState(SpinState.START_SPINNING);
+            canSpin = false;
 
-                    spinners[i].setState(SpinState.STOP_SPINNING);
-                    if (i == spinnerCount - 1) {
-                        
-                        checkResultsTimeout = setTimeout(() => {
-                            checkResults();
-                            
-                        }, 250);
+            setTimeout(function () {
+                spinners[i].setState(SpinState.STOP_SPINNING);
+                
+                if (i == spinnerCount - 1) {
 
-                    }
+                    checkResultsTimeout = setTimeout(() => {
+                        checkResults();
+                    }, 250);
 
-                }, 1500 + i * 500);
-            }
+                }
+
+            }, 1500 + i * 500);
         }
     } else {
         if (amount > balance) {
-            messageString = "Not enough balance!";
+            strMessage = "Not enough balance!";
+            lblMessage.style = messageBadStyle;
         }
     }
-
 }

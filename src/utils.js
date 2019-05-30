@@ -1,7 +1,7 @@
 /*
     These are some helper functions
 
-    I separated them into this file to make main.js more organized
+    I moved them to this file to make main.js less cluttered
 
 */
 
@@ -9,49 +9,37 @@
 function resetSpinnerAnimations() {
 
     for (let i = 0; i < 3; i++) {
-
         for (let j = 1; j < spinnerCount; j++) {
             spinners[j].highlightedSlots[i] = false;
             spinners[j].highlight = false;
         }
-
-
     }
 
-
 }
-
-
 
 
 function toggleRectanglesVisibility() {
     let id = 0;
 
-    toggler = setInterval(() => {
+    rectangleToggler = setInterval(() => {
         hideAllRects();
 
         animationTimer = 0;
 
-        for(let i = 0; i < spinnerCount; i++){
+        for (let i = 0; i < spinnerCount; i++) {
             spinners[i].clearHighlights();
         }
 
         setRectGroupVisibility(id, true);
 
-
         //===Determine which slots to highlight as winning
         for (let i = 0; i < RectangleGroups[id].length; i++) {
             let currentRectangle = RectangleGroups[id][i].rect;
-            let spinnerID = Math.floor((currentRectangle.x - spinners[0].x)/spinnerWidth);
-            let imageID =   Math.floor((currentRectangle.y - spinners[0].y)/spinnerWidth);
+            let spinnerID = Math.floor((currentRectangle.x - spinners[0].x) / spinnerWidth);
+            let imageID = Math.floor((currentRectangle.y - spinners[0].y) / spinnerWidth);
             //console.log("Spinner: " + spinnerID + " Image: " + imageID);
-        
 
             spinners[spinnerID].highlightedSlots[imageID] = true;
-           
-
-
-    
         }
 
         id++;
@@ -60,8 +48,6 @@ function toggleRectanglesVisibility() {
         }
 
     }, 1000);
-
-
 
 }
 
@@ -95,13 +81,13 @@ function readTextFile(file, callback) {
 
 
 /*
-* v = ((v * (N - 1)) + w) / N; 
-* 
-* where v is the current value, w is the value towards which we want to move, 
-* and N is the slowdown factor. The higher N, the slower v approaches w.
-* */
+    Basic smoothing function
+    v = ((v * (N - 1)) + w) / N; 
 
-
+    v - current value
+    w - goal value
+    The higher factor, the slower v approaches w.
+*/
 function Smooth(current, goal, factor) {
     return ((current * (factor - 1)) + goal) / factor;
 }
@@ -109,30 +95,30 @@ function Smooth(current, goal, factor) {
 
 //===Remove and re-add the GUI sprites so that they will be drawn on top of everything and in this order
 function updateGUIOrder() {
-    stage.removeChild(lowerPanel);
-    stage.removeChild(upperPanel);
-    stage.removeChild(balanceDisplayLabel);
-    stage.removeChild(balanceLabel);
-    stage.removeChild(lastWinLabel);
-    stage.removeChild(lastWinDisplayLabel);
-    stage.removeChild(messageLabel);
-    stage.removeChild(betPointerImg);
+    stage.removeChild(sprLowerPanel);
+    stage.removeChild(sprUpperPanel);
+    stage.removeChild(lblBalanceNumber);
+    stage.removeChild(lblBalanceText);
+    stage.removeChild(lblLastWinText);
+    stage.removeChild(lblLastWinNumber);
+    stage.removeChild(lblMessage);
+    stage.removeChild(sprBetPointer);
 
-    stage.addChild(lowerPanel);
-    stage.addChild(upperPanel);
-    stage.addChild(balanceDisplayLabel);
-    stage.addChild(balanceLabel);
-    stage.addChild(lastWinLabel);
-    stage.addChild(lastWinDisplayLabel);
-    stage.addChild(messageLabel);
-    stage.addChild(betPointerImg);
+    stage.addChild(sprLowerPanel);
+    stage.addChild(sprUpperPanel);
+    stage.addChild(lblBalanceNumber);
+    stage.addChild(lblBalanceText);
+    stage.addChild(lblLastWinText);
+    stage.addChild(lblLastWinNumber);
+    stage.addChild(lblMessage);
+    stage.addChild(sprBetPointer);
 }
 
-
+//===Called in main loop
 function movePointer(value) {
     let goalX = button100.btn.x + button100.btn.width / 2;
 
-    if (betPointerImg) {
+    if (sprBetPointer) {
 
         if (value >= 20) {
 
@@ -164,16 +150,13 @@ function movePointer(value) {
 
     }
 
-    betPointerImg.x = Smooth(betPointerImg.x, goalX, 8);
+    sprBetPointer.x = Smooth(sprBetPointer.x, goalX, 8);
 }
 
+//===Sine function, used for oscillations
+function Sinusoid(value, frequency, amplitude) {
 
-function Sinusoid(value, frequency, amplitude)
-{
+    let val = value + (amplitude * Math.sin(animationTimer * frequency * deltaTime));
 
-    let val = value + amplitude * Math.sin(animationTimer * 2 * Math.PI * frequency * deltaTime);
-    //float y = 1.25f;
-    //console.log(val);
-
-   return val;
+    return val;
 }

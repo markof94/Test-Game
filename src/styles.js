@@ -1,3 +1,5 @@
+//===Label styles
+
 let labelStyle = new TextStyle({
     fontFamily: myFont,
     fontSize: Math.floor(spinnerWidth / 4),
@@ -34,9 +36,24 @@ let balanceTextStyle = new TextStyle({
 
 });
 
-let messageStyle = new TextStyle({
+let messageNeutralStyle = new TextStyle({
     fontFamily: myFont,
     fontSize: Math.floor(spinnerWidth / 5),
     fill: "white",
 
 });
+
+let messageGoodStyle = new TextStyle({
+    fontFamily: myFont,
+    fontSize: Math.floor(spinnerWidth / 5),
+    fill: "#ffe301",
+
+});
+
+let messageBadStyle = new TextStyle({
+    fontFamily: myFont,
+    fontSize: Math.floor(spinnerWidth / 5),
+    fill: "#ff652f",
+
+});
+

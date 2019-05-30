@@ -1,6 +1,7 @@
+
 class Button{
     constructor(x, y, w, h, label){
-        this.btn = t.button(buttonFrames, x, y);
+        this.btn = tink.button(textureButtonFrames, x, y);
         this.btn.width = w;
         this.btn.height = h;
     
@@ -10,8 +11,6 @@ class Button{
             fontSize: Math.floor(w/3),
             fill: "white",
             fontWeight: "bold"
-        
- 
           });
 
         this.label = new Text(label, this.labelStyle);
