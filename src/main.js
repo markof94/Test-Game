@@ -73,6 +73,7 @@ let lblBalanceText;
 let lblLastWinNumber;
 let lblLastWinText;
 let lblMessage;
+let lblLoading;
 
 let strMessage; //what message to display
 
@@ -103,9 +104,16 @@ let myFont = "Russo One";
 let data; //JSON DATA
 let canSpin = true;
 let soundsLoaded = false;
+let everythingLoaded = false;
 let checkResultsTimeout; //used for clearing timeout
 
 function init() {
+
+    lblLoading = new Text("Loading...", balanceTextStyle);
+    lblLoading.position.set(window.innerWidth / 2, window.innerHeight / 2);
+    lblLoading.anchor.set(0.5, 0.5);
+
+    stage.addChild(lblLoading);
 
     //===Basic responsiveness check, fit the screen
     //===Most draw sizes will later be based off spinnerWidth
@@ -164,13 +172,14 @@ function init() {
         pointer = tink.makePointer();
 
 
-    }, 200);
+    }, 500);
 
 
 }
 
 //===After assets have been loaded
 function onLoad() {
+
 
     //Assign assets to variables to be used later
     textureSlotImages[0] = TextureCache[data.images.slot1];
@@ -198,30 +207,33 @@ function onLoad() {
 
     sounds.whenLoaded = () => {
 
-        soundsLoaded = true;
-
-        sndBet = sounds[data.sounds.bet];
-        sndLose = sounds[data.sounds.lose];
-        sndSpinStop = sounds[data.sounds.spinstop];
-        sndWin = sounds[data.sounds.win];
-        sndMusic = sounds[data.sounds.music];
-
-        sndMusic.loop = true;
-        //music.play();
-
-        sndMusic.volume = 0.4;
+        finishLoading();
     }
 
-    console.log("Assets Loaded");
 
+}
+
+function finishLoading(){
+
+    soundsLoaded = true;
+
+    sndBet = sounds[data.sounds.bet];
+    sndLose = sounds[data.sounds.lose];
+    sndSpinStop = sounds[data.sounds.spinstop];
+    sndWin = sounds[data.sounds.win];
+    sndMusic = sounds[data.sounds.music];
+
+    sndMusic.loop = true;
+    //music.play();
+
+    sndMusic.volume = 0.4;
+    
     //===Button frames to be used for bet button creation
     textureButtonFrames = [
         textureButtonUp,
         textureButtonOver,
         textureButtonDown
     ]
-
-
 
     //===Calculate positions
     let spinnersX = window.innerWidth / 2 - spinnerWidth * 2.9;
@@ -264,6 +276,11 @@ function onLoad() {
 
     stage.addChild(sprBetPointer);
 
+    
+    console.log("Assets Loaded");
+    everythingLoaded = true;
+
+    stage.removeChild(lblLoading);
 
     //===Initiate the main loop thread
     loop();
@@ -272,6 +289,12 @@ function onLoad() {
 
 //===Update stuff
 function loop() {
+
+    if(!everythingLoaded){
+        finishLoading();
+
+        return;
+    }
 
     requestAnimationFrame(loop);
 

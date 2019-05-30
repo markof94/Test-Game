@@ -51,7 +51,8 @@
             PIXI.utils.sayHello(type);
 
           
-            var renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, null, false, true);
+            var renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, false, true, true);
+          
             document.body.appendChild(renderer.view);
            
             init();
