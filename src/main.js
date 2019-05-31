@@ -117,8 +117,11 @@ function init() {
 
     //===Basic responsiveness check, fit the screen
     //===Most draw sizes will later be based off spinnerWidth
-    if (spinnerWidth > window.innerWidth * 0.1) {
-        spinnerWidth *= 0.5;
+    while (spinnerWidth > window.innerWidth * 0.1) {
+        spinnerWidth *= 0.9;
+    }
+    while(spinnerWidth * 9 > window.innerHeight){
+        spinnerWidth *= 0.9;
     }
     spinnerHeight = spinnerWidth * 3;
 

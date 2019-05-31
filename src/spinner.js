@@ -21,7 +21,7 @@ class Spinner {
     }
 
 
-    assignValues = function () {
+    assignValues() {
 
         for (let i = 0; i < this.placeholderCount; i++) {
             this.value[i] = Math.floor(Math.random() * spinnerTotalImages);
@@ -51,7 +51,7 @@ class Spinner {
 
     }
 
-    update = function () {
+    update() {
         for (let i = 0; i < this.placeholderCount; i++) {
             this.placeholderImgs[i].y += this.speed;
             if (this.placeholderImgs[i].y >= this.y + spinnerHeight + spinnerWidth / 2) {
@@ -99,7 +99,7 @@ class Spinner {
     }
 
     //===Change state to passed state and act accordingly
-    setState = function (state) {
+    setState(state) {
         this.spinState = state;
 
         if (this.spinState == SpinState.START_SPINNING) {
@@ -131,7 +131,7 @@ class Spinner {
 
 
 
-    clearHighlights = function () {
+    clearHighlights() {
         this.highlightedSlots = [false, false, false];
 
         for (let i = 0; i < this.imgs.length; i++) {
