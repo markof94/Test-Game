@@ -1,8 +1,13 @@
-# Intro
+# A classic casino 5x3 reels slot game.
 
-A classic casino 5x3 reels slot game.
+
 
 Written in JavaScript with PixiJS library.
+
+[Try it out here](https://markof94.github.io/Test-Game/bin/index.html)
+
+
+![alt text](https://i.imgur.com/YhrGHgh.png)
 
 # Combination checks included:
 
