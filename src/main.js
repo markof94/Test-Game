@@ -120,7 +120,7 @@ function init() {
     while (spinnerWidth > window.innerWidth * 0.1) {
         spinnerWidth *= 0.9;
     }
-    while(spinnerWidth * 9 > window.innerHeight){
+    while(spinnerWidth * 8 > window.innerHeight){
         spinnerWidth *= 0.9;
     }
     spinnerHeight = spinnerWidth * 3;
@@ -239,18 +239,18 @@ function finishLoading(){
     ]
 
     //===Calculate positions
-    let spinnersX = window.innerWidth / 2 - spinnerWidth * 2.9;
-    let spinnersY = 200;
+    let guiX = window.innerWidth / 2 - spinnerWidth * 2.9;
+    let guiY = window.innerHeight * 0.2;
     let spinnerOffset = spinnerWidth * 1.2;
 
     //===Draw panels for GUI
     sprLowerPanel = new Sprite(texturePanel, 0, 0);
-    sprLowerPanel.position.set(spinnersX, spinnersY + spinnerHeight);
+    sprLowerPanel.position.set(guiX, guiY + spinnerHeight);
     sprLowerPanel.width = spinnerWidth * spinnerCount * 1.175;
     sprLowerPanel.height = spinnerHeight / 2;
 
     sprUpperPanel = new Sprite(texturePanel, 0, 0);
-    sprUpperPanel.position.set(spinnersX, spinnersY - spinnerWidth * 1.5);
+    sprUpperPanel.position.set(guiX, guiY - spinnerWidth * 1.5);
     sprUpperPanel.width = spinnerWidth * spinnerCount * 1.175;
     sprUpperPanel.height = spinnerHeight / 2;
 
@@ -263,8 +263,8 @@ function finishLoading(){
 
     //Initiate spinners
     for (let i = 0; i < spinnerCount; i++) {
-        spinners[i] = new Spinner(spinnersX, spinnersY);
-        spinnersX += spinnerOffset;
+        spinners[i] = new Spinner(guiX, guiY);
+        guiX += spinnerOffset;
     }
 
     //===Make a pointer to show what bet amount is active

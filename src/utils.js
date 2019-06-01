@@ -1,5 +1,5 @@
 /*
-    These are some helper functions
+    Some helper functions
 
     I moved them to this file to make main.js less cluttered
 
